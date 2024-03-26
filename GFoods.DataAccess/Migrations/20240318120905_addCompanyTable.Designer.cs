@@ -4,6 +4,7 @@ using GFoods.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GFoods.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240318120905_addCompanyTable")]
+    partial class addCompanyTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,38 +96,6 @@ namespace GFoods.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            City = "City1",
-                            Name = "Action1",
-                            PhoneNumber = "01234567891",
-                            PostalCode = "PostalCode1",
-                            State = "IL1",
-                            StreetAddress = "1"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            City = "City2",
-                            Name = "Action2",
-                            PhoneNumber = "01234567892",
-                            PostalCode = "PostalCode2",
-                            State = "IL2",
-                            StreetAddress = "2"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            City = "City3",
-                            Name = "Action3",
-                            PhoneNumber = "01234567893",
-                            PostalCode = "PostalCode3",
-                            State = "IL3",
-                            StreetAddress = "3"
-                        });
                 });
 
             modelBuilder.Entity("GFoods.Models.Product", b =>
@@ -435,9 +406,6 @@ namespace GFoods.DataAccess.Migrations
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -450,8 +418,6 @@ namespace GFoods.DataAccess.Migrations
 
                     b.Property<string>("StreetAddress")
                         .HasColumnType("nvarchar(max)");
-
-                    b.HasIndex("CompanyId");
 
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
@@ -516,15 +482,6 @@ namespace GFoods.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("GFoods.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("GFoods.Models.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId");
-
-                    b.Navigation("Company");
                 });
 #pragma warning restore 612, 618
         }

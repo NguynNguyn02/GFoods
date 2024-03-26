@@ -17,6 +17,8 @@ namespace GFoods.DataAccess.Data
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Company> Companies { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -24,6 +26,11 @@ namespace GFoods.DataAccess.Data
                 new Category { Id = 1, Name = "Action1", DisplayOrder = 1 },
                 new Category { Id = 2, Name = "Action2", DisplayOrder = 2 },
                 new Category { Id = 3, Name = "Action3", DisplayOrder = 3 }
+           );
+            modelBuilder.Entity<Company>().HasData(
+                new Company { Id = 1, Name = "Action1", StreetAddress = "1", City = "City1", PostalCode = "PostalCode1", State = "IL1", PhoneNumber = "01234567891" },
+                new Company { Id = 2, Name = "Action2", StreetAddress = "2", City = "City2", PostalCode = "PostalCode2", State = "IL2", PhoneNumber = "01234567892" },
+                new Company { Id = 3, Name = "Action3", StreetAddress = "3", City = "City3", PostalCode = "PostalCode3", State = "IL3", PhoneNumber = "01234567893" }
            );
             modelBuilder.Entity<Product>().HasData(
                 new Product

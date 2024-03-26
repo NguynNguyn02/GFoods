@@ -1,11 +1,14 @@
 ﻿using GFoods.DataAccess.Data;
 using GFoods.DataAccess.Repository.IRepository;
 using GFoods.Models;
+using GFoods.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GFoods.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
