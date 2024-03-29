@@ -30,10 +30,35 @@
                         <label asp-for="Input.ConfirmPassword" class="ms-2 text-muted">Xác nhận lại mật khẩu</label>
                         <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                     </div>
-                    <div class="form-floating mb-3 col-md-12">
-                        <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="username"  placeholder="Điện thoại" />
+                    <div class="form-floating mb-3 col-md-6">
+                        <input asp-for="Input.Name" class="form-control" autocomplete="username" placeholder="Họ tên" />
+                        <label asp-for="Input.Name" class="ms-2 text-muted">Điện thoại</label>
+                        <span asp-validation-for="Input.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="username" placeholder="Điện thoại" />
                         <label asp-for="Input.PhoneNumber" class="ms-2 text-muted">Điện thoại</label>
                         <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <input asp-for="Input.StreetAddress" class="form-control"  placeholder="Địa chỉ đường phố" />
+                        <label asp-for="Input.StreetAddress" class="ms-2 text-muted">Địa chỉ</label>
+                        <span asp-validation-for="Input.StreetAddress" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <input asp-for="Input.City" class="form-control"  placeholder="Thành phố" />
+                        <label asp-for="Input.City" class="ms-2 text-muted">Thành phố</label>
+                        <span asp-validation-for="Input.City" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <input asp-for="Input.State" class="form-control"  placeholder="State" />
+                        <label asp-for="Input.State" class="ms-2 text-muted">State</label>
+                        <span asp-validation-for="Input.State" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3 col-md-6">
+                        <input asp-for="Input.PostalCode" class="form-control" placeholder="Mã bưu điện" />
+                        <label asp-for="Input.PostalCode" class="ms-2 text-muted">Mã bưu điện</label>
+                        <span asp-validation-for="Input.PostalCode" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-3 col-md-6">
                         <select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-select">
@@ -42,55 +67,69 @@
                             </option>
                         </select>
                     </div>
-                    <div class="col-12">
-
-                    <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Đăng kí</button>
+                    <div class="form-floating mb-3 col-md-6" id="companyList" hidden>
+                        <select asp-for="Input.CompanyId" asp-items="@Model.Input.CompanyList" class="form-select">
+                            <option disabled selected>
+                                Chọn công ty
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-12 text-center">
+                        <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Đăng kí</button>
                     </div>
                 </form>
             </div>
             @* <div class="col-md-12">
-                <section>
-                    <p class="divider-text d-flex pt-3">Hoặc</p>
-                    <h3>Use another service to register.</h3>
-                    @{
-                        if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                        {
-                            <div>
-                                <p>
-                                    There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
-                                        article
-                                        about setting up this ASP.NET application to support logging in via external services
-                                    </a>.
-                                </p>
-                            </div>
-                        }
-                        else
-                        {
-                            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                                <div>
-                                    <p>
-                                        @foreach (var provider in Model.ExternalLogins!)
-                                        {
-                                            <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                        }
-                                    </p>
-                                </div>
-                            </form>
-                        }
-                    }
-                </section>
+            <section>
+            <p class="divider-text d-flex pt-3">Hoặc</p>
+            <h3>Use another service to register.</h3>
+            @{
+            if ((Model.ExternalLogins?.Count ?? 0) == 0)
+            {
+            <div>
+            <p>
+            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
+            article
+            about setting up this ASP.NET application to support logging in via external services
+            </a>.
+            </p>
+            </div>
+            }
+            else
+            {
+            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+            <div>
+            <p>
+            @foreach (var provider in Model.ExternalLogins!)
+            {
+            <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+            }
+            </p>
+            </div>
+            </form>
+            }
+            }
+            </section>
             </div> *@
         </div>
 
     </div>
 </div>
 
-
-
-
-
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
+    <script>
+        $(document).ready(function () {
+            $('#Input_Role').change(function () {
+                var selectRole = $('#Input_Role Option:Selected').text();
+                if (selectRole == 'Company') {
+                    $('#companyList').removeAttr("hidden");
+                    $('#Input_CompanyId').show();
+                }
+                else {
+                    $('#Input_CompanyId').hide();
+                }
+            })
+        })
+    </script>
 }
