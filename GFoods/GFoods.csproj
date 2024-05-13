@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\paymentOnline.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\paymentOnline.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Customer\Data\" />
@@ -19,6 +27,7 @@
   <ItemGroup>
     <None Include="wwwroot\css\login.css" />
     <None Include="wwwroot\js\login.js" />
+    <None Include="wwwroot\js\paymentOnline.js" />
   </ItemGroup>
 
   <ItemGroup>

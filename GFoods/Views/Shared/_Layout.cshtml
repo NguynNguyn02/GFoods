@@ -30,6 +30,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="Customer" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Order" asp-action="Index">Order</a>
+                        </li>
                         @if (User.IsInRole(SD.Role_Admin))
                         {
                             <li class="nav-item dropdown">
@@ -46,9 +49,15 @@
                                     <li class="nav-item">
                                         <a class="nav-link text-dark" asp-area="Admin" asp-controller="Company" asp-action="Index">Company</a>
                                     </li>
+                                   
                                 </ul>
                             </li>
                         }
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="Customer" asp-controller="Cart" asp-action="Index">
+                                <i class="bi bi-cart"></i>&nbsp;(0)
+                            </a>
+                        </li>
                     </ul>
                     <partial name="_LoginPartial" />
 
