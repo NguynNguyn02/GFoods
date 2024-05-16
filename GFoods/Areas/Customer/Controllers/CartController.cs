@@ -5,6 +5,7 @@ using GFoods.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace GFoods.Areas.Customer.Controllers
@@ -14,11 +15,14 @@ namespace GFoods.Areas.Customer.Controllers
     public class CartController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IVnPayRepository _vnPayService;
+
         [BindProperty]
         public ShoppingCartVM ShoppingCartVM { get; set; }
-        public CartController(IUnitOfWork unitOfWork)
+        public CartController(IUnitOfWork unitOfWork, IVnPayRepository vnPayService)
         {
             _unitOfWork = unitOfWork;
+            _vnPayService = vnPayService;
         }
         public IActionResult Index()
         {
@@ -38,11 +42,7 @@ namespace GFoods.Areas.Customer.Controllers
             }
             return View(ShoppingCartVM);
         }
-        [Authorize]
-        public IActionResult PaymentCallBack()
-        {
-            return View();
-        }
+
         private double GetPriceBaseOnQuantity(ShoppingCart shoppingCart)
         {
             if (shoppingCart.Product.PriceSale != null)
@@ -114,8 +114,9 @@ namespace GFoods.Areas.Customer.Controllers
         }
         [HttpPost]
         [ActionName("Summary")]
-        public IActionResult SummaryPOST(ShoppingCartVM shoppingCartVM)
+        public IActionResult SummaryPOST(ShoppingCartVM shoppingCartVM, string payment)
         {
+
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
@@ -125,14 +126,43 @@ namespace GFoods.Areas.Customer.Controllers
             ShoppingCartVM.OrderHeader.ApplicationUserId = userId;
 
             ApplicationUser applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+            _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
+            _unitOfWork.Save();
+            var orderIdTemporary = ShoppingCartVM.OrderHeader.Id;
             foreach (var item in ShoppingCartVM.ShoppingCartList)
             {
                 item.Price = GetPriceBaseOnQuantity(item);
                 ShoppingCartVM.OrderHeader.OrderTotal += item.Price * item.Count;
             }
-            if (applicationUser.CompanyId.GetValueOrDefault()==0)
+            foreach (var cart in ShoppingCartVM.ShoppingCartList)
             {
-                //day la tai khoan khach hang binh thuong 
+                var orderDetail = new OrderDetail()
+                {
+                    ProductId = cart.ProductId,
+                    OrderHeaderId = ShoppingCartVM.OrderHeader.Id,
+                    Price = cart.Price,
+                    Count = cart.Count,
+                };
+                _unitOfWork.OrderDetail.Add(orderDetail);
+                _unitOfWork.Save();
+                TempData["OrderDetail"] = JsonConvert.SerializeObject(orderDetail);
+            }
+            if (payment == "Thanh toán bằng VNPAY")
+            {
+                var requestModel = new VnPaymentRequestModel
+                {
+                    Amount = ShoppingCartVM.OrderHeader.OrderTotal,
+                    CreatedDate = DateTime.Now,
+                    Description = $"Thanh toán đơn hàng {orderIdTemporary}",
+                    FullName = applicationUser.Name,
+                    OrderHeaderId = orderIdTemporary,
+                };
+                TempData["RequestModel"] = JsonConvert.SerializeObject(requestModel);
+                return Redirect(_vnPayService.CreatePaymentUrl(HttpContext, requestModel));
+            }
+            if (applicationUser.CompanyId.GetValueOrDefault() == 0)
+            {
+                //day la tai khoan khach hang binh thuong
                 ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
                 ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
             }
@@ -141,36 +171,63 @@ namespace GFoods.Areas.Customer.Controllers
                 ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusDelayedPayment;
                 ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusApproved;
             }
-            _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
+            _unitOfWork.OrderHeader.Update(ShoppingCartVM.OrderHeader);
             _unitOfWork.Save();
-            foreach(var cart in ShoppingCartVM.ShoppingCartList)
-            {
-                OrderDetail orderDetail = new OrderDetail() {
-                    ProductId = cart.ProductId,
-                    OrderHeaderId = ShoppingCartVM.OrderHeader.Id,
-                    Price = cart.Price,
-                    Count = cart.Count,
 
-                };
-                _unitOfWork.OrderDetail.Add(orderDetail);
-                _unitOfWork.Save();
-            }
-            if (applicationUser.CompanyId.GetValueOrDefault() == 0)
-            {
-                
-                
-            }
-            return RedirectToAction(nameof(OrderConfirmation), new {id = ShoppingCartVM.OrderHeader.Id});
+
+            return RedirectToAction(nameof(OrderConfirmation), new { id = ShoppingCartVM.OrderHeader.Id });
         }
         public IActionResult PaymentOnline()
         {
             return View();
         }
-        public IActionResult OrderConfirmation(int id) 
+        public IActionResult OrderConfirmation(int id)
         {
-
-
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u=>u.Id == id,includeProperties:"ApplicationUser");
+            List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u=>u.ApplicationUserId==orderHeader.ApplicationUserId).ToList();
+            _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+            _unitOfWork.Save();
             return View(id);
-        }   
+        }
+        public IActionResult PaymentFail()
+        {
+            return View();
+        }
+        [Authorize]
+        public IActionResult PaymentCallBack()
+        {
+            var response = _vnPayService.PaymentExcute(Request.Query);
+
+            if (response == null || response.VnPayResponseCode != "00")
+            {
+                TempData["Error"] = $" Có lỗi xảy ra trong quá trình xử lý.Mã lỗi: {response.VnPayResponseCode}";
+                var requestModelJson = TempData["RequestModel"].ToString();
+                var requestModel = JsonConvert.DeserializeObject<VnPaymentRequestModel>(requestModelJson);
+                OrderHeader header = _unitOfWork.OrderHeader.Get(u => u.Id == requestModel.OrderHeaderId, includeProperties: "ApplicationUser");
+                var orderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == requestModel.OrderHeaderId,includeProperties:"Product");
+                _unitOfWork.OrderHeader.Remove(header);
+                _unitOfWork.OrderDetail.RemoveRange(orderDetail);
+                _unitOfWork.Save();
+                return RedirectToAction(nameof(PaymentFail));
+
+            }
+            if (TempData["RequestModel"] != null || TempData["OrderDetail"] != null)
+            {
+                var requestModelJson = TempData["RequestModel"].ToString();
+                var requestModel = JsonConvert.DeserializeObject<VnPaymentRequestModel>(requestModelJson);
+                var orderDetailJson = TempData["OrderDetail"].ToString();
+                var orderDetail = JsonConvert.DeserializeObject<OrderDetail>(orderDetailJson);
+                ViewData["RequestModel"] = requestModel;
+                OrderHeader header = _unitOfWork.OrderHeader.Get(u => u.Id == requestModel.OrderHeaderId, includeProperties: "ApplicationUser");
+                header.OrderStatus = SD.StatusPending;
+                header.PaymentStatus = SD.PaymentStatusApproved;
+                _unitOfWork.OrderHeader.Update(header);
+                _unitOfWork.Save();
+                TempData["Success"] = "Thanh toán VNPAY thành công!";
+                return RedirectToAction(nameof(OrderConfirmation), new { id = requestModel.OrderHeaderId });
+            }
+            return RedirectToAction(nameof(PaymentFail));
+
+        }
     }
 }

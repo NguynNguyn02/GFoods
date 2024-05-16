@@ -25,7 +25,7 @@ builder.Services.AddScoped<IEmailSender,EmailSender>();
 builder.Services
     .AddScoped<IUnitOfWork, UnitOfWork>();
 
-
+builder.Services.AddScoped<IVnPayRepository, VnPayReponsitory>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

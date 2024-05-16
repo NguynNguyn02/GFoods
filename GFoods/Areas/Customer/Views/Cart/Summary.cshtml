@@ -9,7 +9,7 @@
     <div class="container">
         <div class="card">
             <div class="card-header bg-dark text-light ml-0">
-                <div class=" row container">
+                <div class="row container">
                     <div class="col-6">
                         <i class="fa fa-shopping-cart"></i> &nbsp;
                         Chi tiết đơn hàng
@@ -82,6 +82,13 @@
                                     <span asp-validation-for="OrderHeader.PostalCode" class="text-danger"></span>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label>Hình thức thanh toán</label>
+                                <select class="form-control" name="TypePayment" id="drTypePayment">
+                                    <option value="1" selected>COD</option>
+                                    <option value="2">Chuyển khoản</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="col-12 col-lg-5 offset-lg-1">
                             <h4 class="d-flex justify-content-between align-items-center mb-3">
@@ -112,7 +119,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="card-footer">
                 <div class="row">
                     <div class="col-12 col-md-8 pt-2">
@@ -122,14 +129,18 @@
                         </p>
                     </div>
                     <div class="col-12 col-md-4">
-                        <button type="submit" value="Place Order" class="btn btn-primary form-control">Đặt hàng</button>
+                        <input type="submit" name="payment" value="Đặt hàng COD" class="btn btn-primary form-control" />
+                        @if (User.IsInRole("Customer"))
+                        {
+                            <input type="submit" name="payment" value="Thanh toán bằng VNPAY" class="btn btn-primary form-control" />
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </form>
-X
+
 @section scripts {
     <script>
         let My_Bank = {
@@ -170,7 +181,6 @@ X
                         } else {
                             console.log("Không thành công")
                         }
-
                     } catch {
                         console.log("Lỗi")
                     }

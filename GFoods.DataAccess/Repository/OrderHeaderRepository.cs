@@ -22,7 +22,7 @@ namespace GFoods.DataAccess.Repository
         {
             _db.OrderHeaders.Update(orderHeader);
         }
-
+        
         public void UpdateStatus(int id, string orderstatus, string? paymentStatus = null)
         {
             var orderFromDb = _db.OrderHeaders.FirstOrDefault(x => x.Id == id);

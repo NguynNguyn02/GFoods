@@ -22,16 +22,17 @@ namespace GFoods.Models
         public string Detail {  get; set; }
         public int Quantity { get; set; }
         [ValidateNever]
-
         public string ImageUrl {  get; set; }
         public decimal OriginalPrice { get; set; }
         public decimal Price { get; set; }
         public decimal? PriceSale { get; set; }
 
         public int CategoryId { get; set; }
+
         [ForeignKey("CategoryId")]
         [ValidateNever]
         public Category Category { get; set; }
+
 
     }
 }
