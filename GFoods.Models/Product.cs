@@ -27,12 +27,11 @@ namespace GFoods.Models
         public decimal Price { get; set; }
         public decimal? PriceSale { get; set; }
 
-        public int CategoryId { get; set; }
+        public int CategoryProductId { get; set; }
 
-        [ForeignKey("CategoryId")]
+        [ForeignKey("CategoryProductId")]
         [ValidateNever]
-        public Category Category { get; set; }
-
+        public CategoryProduct CategoryProduct { get; set; }
 
     }
 }

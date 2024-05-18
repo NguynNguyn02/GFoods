@@ -27,7 +27,7 @@ namespace GFoods.Areas.Admin.Controllers
         public IActionResult Index()
         {
 
-            List<Product> listProduct = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+            List<Product> listProduct = _unitOfWork.Product.GetAll(includeProperties: "CategoryProduct").ToList();
             return View(listProduct);
         }
         public IActionResult Upsert(int? id)
@@ -109,7 +109,7 @@ namespace GFoods.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "CategoryProduct").ToList();
             return Json(new { data = objProductList });
         }
         [HttpDelete]

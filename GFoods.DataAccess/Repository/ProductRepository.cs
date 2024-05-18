@@ -27,7 +27,7 @@ namespace GFoods.DataAccess.Repository
                 objFromDb.Description = product.Description;
                 objFromDb.Detail = product.Detail;
                 objFromDb.OriginalPrice = product.OriginalPrice;
-                objFromDb.CategoryId = product.CategoryId;
+                objFromDb.CategoryProductId = product.CategoryProductId;
                 objFromDb.PriceSale = product.PriceSale;
                 objFromDb.Price = product.Price;
                 objFromDb.Quantity = product.Quantity;

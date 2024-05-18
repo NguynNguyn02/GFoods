@@ -21,7 +21,7 @@ namespace GFoods.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category");
+            IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "CategoryProduct");
 
             return View(productList);
 
@@ -30,7 +30,7 @@ namespace GFoods.Areas.Customer.Controllers
         {
             ShoppingCart cart = new()
             {
-                Product = _unitOfWork.Product.Get(x => x.Id == productId, includeProperties: "Category"),
+                Product = _unitOfWork.Product.Get(x => x.Id == productId, includeProperties: "CategoryProduct"),
                 Count = 1,
                 ProductId = productId
             };

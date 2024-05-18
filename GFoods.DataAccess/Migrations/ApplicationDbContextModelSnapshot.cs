@@ -47,19 +47,60 @@ namespace GFoods.DataAccess.Migrations
                         {
                             Id = 1,
                             DisplayOrder = 1,
-                            Name = "Action1"
+                            Name = "N1"
                         },
                         new
                         {
                             Id = 2,
                             DisplayOrder = 2,
-                            Name = "Action2"
+                            Name = "N2"
                         },
                         new
                         {
                             Id = 3,
                             DisplayOrder = 3,
-                            Name = "Action3"
+                            Name = "N3"
+                        });
+                });
+
+            modelBuilder.Entity("GFoods.Models.CategoryProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CategoryProducts");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DisplayOrder = 1,
+                            Name = "Tây Bắc"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DisplayOrder = 2,
+                            Name = "Nghệ An"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DisplayOrder = 3,
+                            Name = "Hà Nội"
                         });
                 });
 
@@ -99,7 +140,7 @@ namespace GFoods.DataAccess.Migrations
                         {
                             Id = 1,
                             City = "City1",
-                            Name = "Action1",
+                            Name = "N1",
                             PhoneNumber = "01234567891",
                             PostalCode = "PostalCode1",
                             State = "IL1",
@@ -109,7 +150,7 @@ namespace GFoods.DataAccess.Migrations
                         {
                             Id = 2,
                             City = "City2",
-                            Name = "Action2",
+                            Name = "N2",
                             PhoneNumber = "01234567892",
                             PostalCode = "PostalCode2",
                             State = "IL2",
@@ -119,7 +160,7 @@ namespace GFoods.DataAccess.Migrations
                         {
                             Id = 3,
                             City = "City3",
-                            Name = "Action3",
+                            Name = "N3",
                             PhoneNumber = "01234567893",
                             PostalCode = "PostalCode3",
                             State = "IL3",
@@ -234,7 +275,7 @@ namespace GFoods.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int>("CategoryProductId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -271,7 +312,7 @@ namespace GFoods.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CategoryProductId");
 
                     b.ToTable("Products");
 
@@ -279,44 +320,44 @@ namespace GFoods.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            CategoryId = 1,
+                            CategoryProductId = 1,
                             Description = "Description1",
-                            Detail = "Detail1",
+                            Detail = "DetailsNguyen",
                             ImageUrl = "",
-                            OriginalPrice = 100m,
-                            Price = 120m,
-                            PriceSale = 110m,
-                            ProductCode = "SP01",
+                            OriginalPrice = 1000m,
+                            Price = 1200m,
+                            PriceSale = 1100m,
+                            ProductCode = "SP1",
                             Quantity = 5,
-                            Title = "Title1"
+                            Title = "Nguyen1"
                         },
                         new
                         {
                             Id = 2,
-                            CategoryId = 2,
+                            CategoryProductId = 2,
                             Description = "Description2",
-                            Detail = "Detail2",
+                            Detail = "DetailNguyen2",
                             ImageUrl = "",
-                            OriginalPrice = 200m,
-                            Price = 220m,
-                            PriceSale = 210m,
+                            OriginalPrice = 2000m,
+                            Price = 2200m,
+                            PriceSale = 2100m,
                             ProductCode = "SP02",
                             Quantity = 10,
-                            Title = "Title2"
+                            Title = "Nguyen2"
                         },
                         new
                         {
                             Id = 3,
-                            CategoryId = 3,
+                            CategoryProductId = 3,
                             Description = "Description3",
-                            Detail = "Detail3",
+                            Detail = "DetailNguyen",
                             ImageUrl = "",
-                            OriginalPrice = 300m,
-                            Price = 320m,
-                            PriceSale = 310m,
+                            OriginalPrice = 3000m,
+                            Price = 3200m,
+                            PriceSale = 3100m,
                             ProductCode = "SP03",
                             Quantity = 15,
-                            Title = "Title3"
+                            Title = "Nguyen3"
                         });
                 });
 
@@ -614,13 +655,13 @@ namespace GFoods.DataAccess.Migrations
 
             modelBuilder.Entity("GFoods.Models.Product", b =>
                 {
-                    b.HasOne("GFoods.Models.Category", "Category")
+                    b.HasOne("GFoods.Models.CategoryProduct", "CategoryProduct")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("CategoryProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("CategoryProduct");
                 });
 
             modelBuilder.Entity("GFoods.Models.ShoppingCart", b =>

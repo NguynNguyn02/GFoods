@@ -19,7 +19,7 @@ namespace GFoods.DataAccess.Repository
         {
             _db = db;
             this.dbSet = _db.Set<T>();
-            _db.Products.Include(x => x.Category).Include(x => x.CategoryId);
+            //_db.Products.Include(x => x.CategoryProduct).Include(x => x.CategoryProductId);
 
 
         }
