@@ -11,9 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options=>options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.ConfigureApplicationCookie(option =>
 {
     option.LoginPath = $"/Identity/Account/Login";
@@ -21,7 +21,7 @@ builder.Services.ConfigureApplicationCookie(option =>
     option.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
 builder.Services.AddRazorPages();
-builder.Services.AddScoped<IEmailSender,EmailSender>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services
     .AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -38,13 +38,40 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllerRoute(
+    name: "MyArea",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+app.MapAreaControllerRoute(
+    name: "MyAreaProducts",
+    areaName: "Admin",
+    pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "TrangChu",
+    pattern: "trang-chu/",
+    defaults: new { area = "Customer", controller = "Home", action = "Index" }
+);
+app.MapControllerRoute(
+    name: "Sanpham",
+    pattern: "san-pham/",
+    defaults: new { area = "Customer", controller = "Products", action = "Index" }
+);
+app.MapControllerRoute(
+    name: "TinTuc",
+    pattern: "tin-tuc",
+    defaults: new { area = "Customer", controller = "News", action = "Index" }
+);
+app.MapControllerRoute(
+    name: "KhuyenMai",
+    pattern: "khuyen-mai",
+    defaults: new { area = "Customer", controller = "Posts", action = "Index" }
+);
+
 
 app.Run();

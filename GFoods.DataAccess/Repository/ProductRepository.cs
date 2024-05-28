@@ -31,6 +31,14 @@ namespace GFoods.DataAccess.Repository
                 objFromDb.PriceSale = product.PriceSale;
                 objFromDb.Price = product.Price;
                 objFromDb.Quantity = product.Quantity;
+                objFromDb.Alias = product.Alias;
+                objFromDb.IsSale = product.IsSale;
+                objFromDb.IsFeature=objFromDb.IsFeature;
+                objFromDb.IsHot = product.IsHot;   
+                objFromDb.SeoDescription = product.SeoDescription; 
+                objFromDb.SeoKeywords = product.SeoKeywords;
+                objFromDb.SeoTitle = product.SeoTitle;
+                objFromDb.IsHome = product.IsHome;
             }
             if(product.ImageUrl != null)
             {

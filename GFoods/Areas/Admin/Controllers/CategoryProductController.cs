@@ -1,6 +1,7 @@
 ﻿using GFoods.DataAccess.Data;
 using GFoods.DataAccess.Repository.IRepository;
 using GFoods.Models;
+using GFoods.Models.ViewModels;
 using GFoods.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,90 +13,112 @@ namespace GFoods.Areas.Admin.Controllers
     public class CategoryProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public CategoryProductController(IUnitOfWork unitOfWork)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public CategoryProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
-            _unitOfWork = unitOfWork;   
+            _webHostEnvironment = webHostEnvironment;
+            _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
-            List<CategoryProduct> items = _unitOfWork.CategoryProduct.GetAll().OrderBy(x=>x.DisplayOrder).ToList();
+            List<CategoryProduct> items = _unitOfWork.CategoryProduct.GetAll().OrderBy(x => x.DisplayOrder).ToList();
             return View(items);
         }
-        public IActionResult Create()
-        {
-            return View();
-        }
-        [HttpPost]
-        public IActionResult Create(CategoryProduct model)
-        {
-            if (model.Name == model.DisplayOrder.ToString())
-            {
-                ModelState.AddModelError("Name", "Name cannot similar DisplayOrder");
-            }
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.CategoryProduct.Add(model);
-                _unitOfWork.Save();
-                TempData["Success"] = "Success Create";
-
-                return RedirectToAction("Index");
-            }
-            return View();
-        }
-        public IActionResult Edit(int? id)
+        public IActionResult Upsert(int? id)
         {
             if (id == null || id == 0)
             {
-                return NotFound();
+                return View(new CategoryProduct());
             }
-            CategoryProduct? item = _unitOfWork.CategoryProduct.Get(u => u.Id == id);
-            if (item == null)
+            else
             {
-                return NotFound();
+                CategoryProduct categoryProduct = _unitOfWork.CategoryProduct.Get(x => x.Id == id);
+                return View(categoryProduct);
             }
-            return View(item);
         }
         [HttpPost]
-        public IActionResult Edit(CategoryProduct model)
+        [ValidateAntiForgeryToken]
+        public IActionResult Upsert(CategoryProduct categoryProduct, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.CategoryProduct.Update(model);
-                _unitOfWork.Save();
-                TempData["Success"] = "Success Edit";
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                if (file != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string productPath = Path.Combine(wwwRootPath, @"images\categoryproduct");
+                    if (!string.IsNullOrEmpty(categoryProduct.ImageUrl))
+                    {
+                        //delete the old image
+                        var oldImagePath = Path.Combine(wwwRootPath, categoryProduct.ImageUrl.TrimStart('\\'));
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+                    categoryProduct.ImageUrl = @"\images\categoryproduct\" + fileName;
+                }
+                if (categoryProduct.Id == 0)
+                {
+                    categoryProduct.CreatedDate = DateTime.Now;
+                    categoryProduct.ModifiedDate = DateTime.Now;
+                    categoryProduct.CreatedBy = User.Identity.Name;
+                    categoryProduct.ModifiedBy = User.Identity.Name;
+                    if (string.IsNullOrEmpty(categoryProduct.SeoTitle))
+                    {
+                        categoryProduct.SeoTitle = categoryProduct.Name;
+                    }
+                    if (string.IsNullOrEmpty(categoryProduct.Alias))
+                    {
+                        categoryProduct.Alias = GFoods.Models.Common.Filter.FilterChar(categoryProduct.Name);
+                    }
+                    _unitOfWork.CategoryProduct.Add(categoryProduct); ;
+                }
+                else
+                {
+                    categoryProduct.ModifiedDate = DateTime.Now;
+                    categoryProduct.ModifiedBy = User.Identity.Name;
+                    categoryProduct.Alias = GFoods.Models.Common.Filter.FilterChar(categoryProduct.Name);
+                    _unitOfWork.CategoryProduct.Update(categoryProduct);
 
+                }
+                _unitOfWork.Save();
+                TempData["Success"] = "Thành công";
                 return RedirectToAction("Index");
             }
-            return View();
+            else
+            {
+                return View(categoryProduct);
+            }
+
+
         }
+        #region API CALLS
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<CategoryProduct> categoryProducts = _unitOfWork.CategoryProduct.GetAll().ToList();
+            return Json(new { data = categoryProducts });
+        }
+        [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            if (id == null || id == 0)
+            var categoryProductToBeDeleted = _unitOfWork.CategoryProduct.Get(x => x.Id == id);
+            if (categoryProductToBeDeleted == null)
             {
-                return NotFound();
+                return Json(new { success = false, message = "Error while deleting" });
             }
-            CategoryProduct? item = _unitOfWork.CategoryProduct.Get(u => u.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-            return View(item);
-        }
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePost(int? id)
-        {
 
-            CategoryProduct? item = _unitOfWork.CategoryProduct.Get(u => u.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-            _unitOfWork.CategoryProduct.Remove(item);
+            _unitOfWork.CategoryProduct.Remove(categoryProductToBeDeleted);
             _unitOfWork.Save();
-            TempData["Success"] = "Success Delete";
-            return RedirectToAction("Index");
-
-
+            return Json(new { success = true, message = "Xóa thành công" });
         }
+
+        #endregion
     }
 }

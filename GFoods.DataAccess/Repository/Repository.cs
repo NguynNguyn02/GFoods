@@ -1,5 +1,6 @@
 ﻿using GFoods.DataAccess.Data;
 using GFoods.DataAccess.Repository.IRepository;
+using GFoods.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace GFoods.DataAccess.Repository
     public class Repository<T> : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext _db;
-        internal DbSet<T> dbSet;
+        public DbSet<T> dbSet;
         public Repository(ApplicationDbContext db)
         {
             _db = db;

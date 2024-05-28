@@ -1,10 +1,9 @@
-﻿@model List<Category>
-
+﻿
 <div class="card shadow border-0 mt-4">
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
-                <h2 class="text-white py-2">Category List</h2>
+                <h2 class="text-white py-2">Danh mục</h2>
             </div>
         </div>
     </div>
@@ -12,53 +11,35 @@
     <div class="card-body p-4">
         <div class="row">
             <div class="col-6">
-                
             </div>
             <div class="col-6 text-end">
-                <a asp-controller="Category" asp-action="Create" class="btn btn-primary">
-                    <i class="bi bi-plus-circle-fill"></i> Create Category
+                <a asp-controller="Category" asp-action="Upsert" class="btn btn-primary">
+                    <i class="bi bi-plus-circle-fill"></i> Tạo mới danh mục
                 </a>
             </div>
         </div>
-
-
-        <table class="table table-bordered table-striped">
+        <table id="tblData" class="table table-bordered table-striped" style="width=" 100%">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Display Order</th>
+                    <th>Tên</th>
+                    <th>Vị trí</th>
+                    <th>Ngày tạo</th>
+                    <th>Người tạo</th>
                     <th></th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.Id</td>
-                        <td>@item.Name</td>
-                        <td>@item.DisplayOrder</td>
-                        <td>
-                            <div class="w-75 btn-group" role="group">
-                                <a asp-controller="Category" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-                                <a asp-controller="Category" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
-                                    <i class="bi bi-trash-fill"></i> Delete
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-
-                }
-            </tbody>
         </table>
     </div>
 </div>
 @section Scripts {
+    <script src="~/js/category1.js">
+    </script>
     @{
         <partial name="_ValidationScriptsPartial" />
     }
 }
+
+
+
 
 

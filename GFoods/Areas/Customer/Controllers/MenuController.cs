@@ -8,10 +8,12 @@ namespace GFoods.Areas.Customer.Controllers
 
     public class MenuController : Controller
     {
-        
+        private readonly ILogger<MenuController> _logger;
+
         private readonly IUnitOfWork _unitOfWork;
-        public MenuController(IUnitOfWork unitOfWork)
+        public MenuController(ILogger<MenuController> logger, IUnitOfWork unitOfWork)
         {
+            _logger = logger;
             _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
@@ -20,7 +22,7 @@ namespace GFoods.Areas.Customer.Controllers
         }
         public IActionResult MenuTop()
         {
-            List<Category> item = _unitOfWork.Category.GetAll().OrderBy(x => x.DisplayOrder).ToList();
+            List<Category> item = _unitOfWork.Category.GetAll().OrderBy(x=>x.DisplayOrder).ToList();
             return PartialView("_MenuTop", item);
         }
         //public IActionResult MenuProductCategory()

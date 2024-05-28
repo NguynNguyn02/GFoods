@@ -26,13 +26,13 @@ namespace GFoods.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-
+                
             List<Product> listProduct = _unitOfWork.Product.GetAll(includeProperties: "CategoryProduct").ToList();
             return View(listProduct);
         }
         public IActionResult Upsert(int? id)
         {
-            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll().Select(x => new SelectListItem
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.CategoryProduct.GetAll().Select(x => new SelectListItem
             {
                 Text = x.Name,
                 Value = x.Id.ToString()
@@ -54,6 +54,7 @@ namespace GFoods.Areas.Admin.Controllers
             }
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Upsert(ProductVM productVM, IFormFile? file)
         {
 
@@ -64,7 +65,6 @@ namespace GFoods.Areas.Admin.Controllers
                 {
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string productPath = Path.Combine(wwwRootPath, @"images\product");
-
                     if (!string.IsNullOrEmpty(productVM.Product.ImageUrl))
                     {
                         //delete the old image
@@ -83,21 +83,36 @@ namespace GFoods.Areas.Admin.Controllers
                 }
                 if (productVM.Product.Id == 0)
                 {
+                    productVM.Product.CreatedDate = DateTime.Now;
+                    productVM.Product.ModifiedDate = DateTime.Now;
+                    productVM.Product.CreatedBy = User.Identity.Name;
+                    productVM.Product.ModifiedBy = User.Identity.Name;
+                    if (string.IsNullOrEmpty(productVM.Product.SeoTitle))
+                    {
+                        productVM.Product.SeoTitle = productVM.Product.Title;
+                    }
+                    if (string.IsNullOrEmpty(productVM.Product.Alias))
+                    {
+                        productVM.Product.Alias = GFoods.Models.Common.Filter.FilterChar(productVM.Product.Title);
+                    }
                     _unitOfWork.Product.Add(productVM.Product);
                 }
                 else
                 {
+                    productVM.Product.ModifiedDate = DateTime.Now;
+                    productVM.Product.ModifiedBy = User.Identity.Name;
+                    productVM.Product.Alias = GFoods.Models.Common.Filter.FilterChar(productVM.Product.Title);
                     _unitOfWork.Product.Update(productVM.Product);
 
                 }
                 _unitOfWork.Save();
-                TempData["Success"] = "Success Create";
+                TempData["Success"] = "Thành công";
 
                 return RedirectToAction("Index");
             }
             else
             {
-                productVM.CategoryList = _unitOfWork.Category.GetAll().Select(x => new SelectListItem
+                productVM.CategoryList = _unitOfWork.CategoryProduct.GetAll().Select(x => new SelectListItem
                 {
                     Text = x.Name,
                     Value = x.Id.ToString()
@@ -105,6 +120,7 @@ namespace GFoods.Areas.Admin.Controllers
                 return View(productVM);
             }
         }
+        
         #region API CALLS
         [HttpGet]
         public IActionResult GetAll()
@@ -118,7 +134,7 @@ namespace GFoods.Areas.Admin.Controllers
             var productToBeDeleted = _unitOfWork.Product.Get(x => x.Id == id);
             if (productToBeDeleted == null)
             {
-                return Json(new { success = false, message = "Error while deleting" });
+                return Json(new { success = false, message = "Lỗi khi xóa" });
             }
             var oldImagePath =
                 Path.Combine(_webHostEnvironment.WebRootPath, productToBeDeleted.ImageUrl.TrimStart('\\'));
@@ -128,7 +144,7 @@ namespace GFoods.Areas.Admin.Controllers
             }
             _unitOfWork.Product.Remove(productToBeDeleted);
             _unitOfWork.Save();
-            return Json(new { success = true, message = "Delete Successful" });
+            return Json(new { success = true, message = "Xóa thành công" });
         }
 
         #endregion

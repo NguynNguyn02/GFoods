@@ -21,9 +21,10 @@ namespace GFoods.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "CategoryProduct");
+            //IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "CategoryProduct");
 
-            return View(productList);
+            //return View(productList);
+            return View();
 
         }
         public IActionResult Details(int productId)
@@ -46,8 +47,8 @@ namespace GFoods.Areas.Customer.Controllers
             shoppingCart.ApplicationUserId = userId;
 
             ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(
-                u => u.ApplicationUserId == userId && 
-                u.ProductId==shoppingCart.ProductId);
+                u => u.ApplicationUserId == userId &&
+                u.ProductId == shoppingCart.ProductId);
             if (cartFromDb != null)
             {
                 cartFromDb.Count += shoppingCart.Count;
@@ -56,7 +57,7 @@ namespace GFoods.Areas.Customer.Controllers
             }
             else
             {
-            _unitOfWork.ShoppingCart.Add(shoppingCart);
+                _unitOfWork.ShoppingCart.Add(shoppingCart);
             }
             TempData["success"] = "Giỏ hàng đã cập nhật thành công!";
             _unitOfWork.Save();

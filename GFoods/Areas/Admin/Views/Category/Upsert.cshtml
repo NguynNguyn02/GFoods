@@ -1,0 +1,88 @@
+﻿@model Category
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">@(Model.Id != 0 ? "Cập nhật" : "Tạo") Danh mục  </h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data">
+            <input asp-for="Id" hidden />
+            <div class="row">
+                <div class="col-12">
+                    <div class="border p-3">
+                        <div asp-validation-summary="ModelOnly"></div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Name" class="form-control border-0 shadow" autofocus />
+                            <label asp-for="Name" class="ms-2"></label>
+                            <span asp-validation-for="Name" class=" text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="DisplayOrder" class="form-control border-0 shadow" />
+                            <label asp-for="DisplayOrder" class="ms-2"></label>
+                            <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Link" class="form-control border-0 shadow" />
+                            <label asp-for="Link" class="ms-2"></label>
+                            <span asp-validation-for="Link" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="Description" class="form-control border-0 shadow" />
+                            <label asp-for="Description" class="ms-2"></label>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="SeoTitle" class="form-control border-0 shadow" />
+                            <label asp-for="SeoTitle" class="ms-2"></label>
+                            <span asp-validation-for="SeoTitle" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="SeoDescription" class="form-control border-0 shadow" />
+                            <label asp-for="SeoDescription" class="ms-2"></label>
+                            <span asp-validation-for="SeoDescription" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="SeoKeywords" class="form-control border-0 shadow" />
+                            <label asp-for="SeoKeywords" class="ms-2"></label>
+                            <span asp-validation-for="SeoKeywords" class="text-danger"></span>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-6 col-md-3">
+                                @if (Model.Id != 0)
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Cập nhật</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Tạo</button>
+                                }
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="Category" asp-action="Index" class="btn btn-outline-primary border form-control">Quay lại</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+            toolbar_mode: 'floating',
+        });
+    </script>
+    @{
+        <partial name="_ValidationScriptsPartial" />
+
+    }
+}

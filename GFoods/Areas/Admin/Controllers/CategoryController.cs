@@ -21,81 +21,72 @@ namespace GFoods.Areas.Admin.Controllers
             List<Category> items = _unitOfWork.Category.GetAll().OrderBy(x=>x.DisplayOrder).ToList();
             return View(items);
         }
-        public IActionResult Create()
+        public IActionResult Upsert(int? id)
         {
-            return View();
-        }
-        [HttpPost]
-        public IActionResult Create(Category model)
-        {
-            if (model.Name == model.DisplayOrder.ToString())
-            {
-                ModelState.AddModelError("Name", "Name cannot similar DisplayOrder");
-            }
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.Category.Add(model);
-                _unitOfWork.Save();
-                TempData["Success"] = "Success Create";
 
-                return RedirectToAction("Index");
-            }
-            return View();
-        }
-        public IActionResult Edit(int? id)
-        {
+
             if (id == null || id == 0)
             {
-                return NotFound();
+                return View(new Category());
             }
-            Category? item = _unitOfWork.Category.Get(u => u.Id == id);
-            if (item == null)
+            else
             {
-                return NotFound();
+                Category category = _unitOfWork.Category.Get(x => x.Id == id);
+                return View(category);
             }
-            return View(item);
         }
         [HttpPost]
-        public IActionResult Edit(Category model)
+        public IActionResult Upsert(Category category)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Update(model);
-                _unitOfWork.Save();
-                TempData["Success"] = "Success Edit";
+                if (category.Id == 0)
+                {
+                    category.CreatedDate = DateTime.Now;
+                    category.CreatedBy = User.Identity.Name;
+                    category.ModifiedBy = User.Identity.Name;
+                    category.ModifiedDate = DateTime.Now;
+                    category.Alias = GFoods.Models.Common.Filter.FilterChar(category.Name);
+                    _unitOfWork.Category.Add(category);
+                }
+                else
+                {
+                    category.ModifiedBy = User.Identity.Name;
+                    category.ModifiedDate = DateTime.Now;
+                    category.Alias = GFoods.Models.Common.Filter.FilterChar(category.Name);
+                    _unitOfWork.Category.Update(category);
 
+                }
+                _unitOfWork.Save();
+                TempData["Success"] = "Thành công";
                 return RedirectToAction("Index");
             }
-            return View();
+            else
+            {
+                return View(category);
+            }
         }
+        #region API CALLS
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<Category> categories = _unitOfWork.Category.GetAll().ToList();
+            return Json(new { data = categories });
+        }
+        [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            if (id == null || id == 0)
+            var categoryToBeDeleted = _unitOfWork.Category.Get(x => x.Id == id);
+            if (categoryToBeDeleted == null)
             {
-                return NotFound();
+                return Json(new { success = false, message = "Error while deleting" });
             }
-            Category? item = _unitOfWork.Category.Get(u => u.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-            return View(item);
-        }
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePost(int? id)
-        {
 
-            Category? item = _unitOfWork.Category.Get(u => u.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-            _unitOfWork.Category.Remove(item);
+            _unitOfWork.Category.Remove(categoryToBeDeleted);
             _unitOfWork.Save();
-            TempData["Success"] = "Success Delete";
-            return RedirectToAction("Index");
-
-
+            return Json(new { success = true, message = "Xóa thành công" });
         }
+
+        #endregion
     }
 }

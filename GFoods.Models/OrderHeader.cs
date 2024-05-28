@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GFoods.Models
 {
-    public class OrderHeader
+    public class OrderHeader 
     {
         public int Id { get; set; }
         public string ApplicationUserId { get; set; }

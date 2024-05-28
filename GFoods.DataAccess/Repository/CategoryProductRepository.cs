@@ -16,11 +16,24 @@ namespace GFoods.DataAccess.Repository
         {
             _db = db;
         }
-        
 
-        public void Update(CategoryProduct categoryProduct)
+
+        public void Update(CategoryProduct product)
         {
-            _db.CategoryProducts.Update(categoryProduct);
+            var objFromDb = _db.CategoryProducts.FirstOrDefault(x => x.Id == product.Id);
+            if (objFromDb != null)
+            {
+                objFromDb.Name = product.Name;
+                objFromDb.DisplayOrder = product.DisplayOrder;
+                objFromDb.SeoDescription = product.SeoDescription;
+                objFromDb.SeoKeywords = product.SeoKeywords;
+                objFromDb.SeoTitle = product.SeoTitle;
+            }
+            if (product.ImageUrl != null)
+            {
+                objFromDb.ImageUrl = product.ImageUrl;
+            }
         }
     }
 }
+
