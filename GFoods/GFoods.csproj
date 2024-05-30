@@ -7,10 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Areas\Customer\Views\Products\ProductCategory.cshtml" />
+    <Content Remove="Areas\Customer\Views\Products\ProductCategory1.cshtml" />
     <Content Remove="wwwroot\js\paymentOnline.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="Areas\Customer\Views\Products\ProductCategory.cshtml" />
     <_ContentIncludedByDefault Remove="wwwroot\js\paymentOnline.js" />
   </ItemGroup>
 
@@ -37,6 +40,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Areas\Customer\Views\Products\ProductCategory1.cshtml" />
+    <None Include="Areas\Customer\Views\Products\ProductCategory.cshtml" />
     <None Include="wwwroot\clients\plugins\bootstrap-colorpicker\css\bootstrap-colorpicker.css.map" />
     <None Include="wwwroot\clients\plugins\bootstrap-colorpicker\css\bootstrap-colorpicker.min.css.map" />
     <None Include="wwwroot\clients\plugins\bootstrap-colorpicker\js\bootstrap-colorpicker.js" />
@@ -1592,10 +1597,18 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Update="wwwroot\assets\styles\single_styles1.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="wwwroot\js\category1.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\Customer\Views\Products\ProductCategory.cshtml" />
   </ItemGroup>
 
 </Project>

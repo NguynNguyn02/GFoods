@@ -1,5 +1,4 @@
-﻿<link rel="stylesheet" type="text/css" href="~/assets/styles/main_styles.css">
-<style>
+﻿<style>
     h6 {
         color: #FFFFFF;
         font-weight: bold;
@@ -192,5 +191,20 @@
         <div class="col-2">
         </div>
     </div>
-
 </div>
+<div style="background-image: url(https://www.huho.vn/wp-content/uploads/2023/04/bg_cate.jpg);" id="saleproduct"></div>
+@section css {
+    <link rel="stylesheet" type="text/css" href="~/assets/styles/bootstrap4/bootstrap.min.css">
+    <link href="~/assets/plugins/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="~/assets/plugins/OwlCarousel2-2.2.1/owl.carousel.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/plugins/OwlCarousel2-2.2.1/animate.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/styles/main_styles.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/styles/responsive.css">
+
+}
+@section Scripts{
+    <script>
+        $("#saleproduct").load("/customer/Products/Partial_ProductSale");
+    </script>
+}

@@ -1,6 +1,5 @@
 ﻿ @model List<Category>
 
-
 @if (Model != null && Model.Any())
 {
     <ul class="navbar_menu">
@@ -11,11 +10,11 @@
                 item.Alias = "";
             }
             if (!string.IsNullOrEmpty(item.Link))
+            {
                 item.Alias = item.Link;
-        <li><a href="@item.Alias">@item.Name</a></li>
+            }
+            <li><a href="/@item.Alias">@item.Name</a></li>
         }
-        }
-
     </ul>
 }
 

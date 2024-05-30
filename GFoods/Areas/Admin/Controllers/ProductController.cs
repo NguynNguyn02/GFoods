@@ -26,7 +26,6 @@ namespace GFoods.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-                
             List<Product> listProduct = _unitOfWork.Product.GetAll(includeProperties: "CategoryProduct").ToList();
             return View(listProduct);
         }

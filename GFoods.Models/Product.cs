@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿    using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -34,7 +34,7 @@ namespace GFoods.Models
         public bool IsFeature { get; set; }
         public bool IsSale { get; set; }
         public bool IsHot { get; set; }
-        public int ProductCategoryId { get; set; }
+        
         [StringLength(250)]
 
         public string SeoTitle { get; set; }

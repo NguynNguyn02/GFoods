@@ -32,17 +32,17 @@ namespace GFoods.Areas.Customer.Controllers
         //    return PartialView("_MenuProductCategory", items);
 
         //}
-        //public IActionResult MenuLeft(int? id)
-        //{
-        //    if (id != null)
-        //    {
-        //        ViewBag.CateId = id;
-        //    }
-        //    var items = db.ProductCategories.ToList();
+        public IActionResult MenuLeft(int? id)
+        {
+            if (id != null)
+            {
+                ViewBag.CateId = id;
+            }
+            var items = _unitOfWork.CategoryProduct.GetAll().ToList();
 
-        //    return PartialView("_MenuLeft", items);
+            return PartialView("_MenuLeft", items);
 
-        //}
+        }
         //public IActionResult MenuArrivals()
         //{
         //    var items = db.ProductCategories.ToList();

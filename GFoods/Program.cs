@@ -42,19 +42,10 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
-app.MapControllerRoute(
-    name: "MyArea",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
-app.MapAreaControllerRoute(
-    name: "MyAreaProducts",
-    areaName: "Admin",
-    pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
+
 app.MapControllerRoute(
     name: "TrangChu",
-    pattern: "trang-chu/",
+    pattern: "trang-chu",
     defaults: new { area = "Customer", controller = "Home", action = "Index" }
 );
 app.MapControllerRoute(
@@ -72,6 +63,29 @@ app.MapControllerRoute(
     pattern: "khuyen-mai",
     defaults: new { area = "Customer", controller = "Posts", action = "Index" }
 );
-
-
+app.MapControllerRoute(
+    name: "GioHang",
+    pattern: "gio-hang",
+    defaults: new { area = "Customer", controller = "Cart", action = "Index" }
+);
+app.MapControllerRoute(
+    name: "ChiTiet",
+    pattern: "chi-tiet/{alias}-p{id}/",
+    defaults: new { area = "Customer", controller = "Products", action = "Detail" }
+);
+app.MapControllerRoute(
+    name: "Productcategory",
+    pattern: "danh-muc-san-pham/{alias}-h{id}/",
+    defaults: new { area = "Customer", controller = "Products", action = "ProductCategory1"}
+);
+app.MapControllerRoute(
+    name: "MyArea",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+app.MapAreaControllerRoute(
+    name: "MyAreaProducts",
+    areaName: "Admin",
+    pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
 app.Run();

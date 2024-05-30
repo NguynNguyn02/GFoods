@@ -882,11 +882,12 @@ section {
     -o-transition: all 0.3s ease;
     transition: all 0.3s ease;
 }
-.red_button:hover {
-    background: #FE7C7F !important;
-}
 
-.red_button a {
+    .red_button:hover {
+        background: #FE7C7F !important;
+    }
+
+    .red_button a {
         display: block;
         color: #FFFFFF;
         text-transform: uppercase;
@@ -1319,7 +1320,6 @@ section {
     margin-top: 73px;
 }
 
-
     .product_slider_container::after {
         display: block;
         position: absolute;
@@ -1336,21 +1336,9 @@ section {
     overflow: visible !important;
 }
 
-
 .product_slider_item .product-item {
     height: 340px;
 }
-
-.product_slider_item {
-    width: 20%;
-}
-
-    .product_slider_item .product-item {
-        width: 100% !important;
-    }
-    .product_slider_item .product-item {
-        height: 340px;
-    }
 
 .product_slider_item {
     width: 20%;

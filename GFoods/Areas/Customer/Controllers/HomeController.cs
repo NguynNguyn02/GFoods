@@ -61,7 +61,6 @@ namespace GFoods.Areas.Customer.Controllers
             }
             TempData["success"] = "Giỏ hàng đã cập nhật thành công!";
             _unitOfWork.Save();
-
             return RedirectToAction(nameof(Index));
         }
 
