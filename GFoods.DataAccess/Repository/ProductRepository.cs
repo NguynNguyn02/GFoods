@@ -39,11 +39,12 @@ namespace GFoods.DataAccess.Repository
                 objFromDb.SeoKeywords = product.SeoKeywords;
                 objFromDb.SeoTitle = product.SeoTitle;
                 objFromDb.IsHome = product.IsHome;
+                objFromDb.ProductImages = product.ProductImages;
             }
-            if(product.ImageUrl != null)
-            {
-                objFromDb.ImageUrl = objFromDb.ImageUrl;
-            }
+            //if(product.ImageUrl != null)
+            //{
+            //    objFromDb.ImageUrl = objFromDb.ImageUrl;
+            //}
         }
     }
 }

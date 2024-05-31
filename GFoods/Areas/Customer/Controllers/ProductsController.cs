@@ -18,7 +18,7 @@ namespace GFoods.Areas.Customer.Controllers
 
         public IActionResult Index(int? id)
         {
-            List<Product> listProduct = _unitOfWork.Product.GetAll(includeProperties: "CategoryProduct").ToList();
+            List<Product> listProduct = _unitOfWork.Product.GetAll(includeProperties: "CategoryProduct,ProductImages").ToList();
             if (id != null)
             {
                 listProduct = listProduct.Where(x=>x.CategoryProductId == id).ToList();
@@ -27,7 +27,7 @@ namespace GFoods.Areas.Customer.Controllers
         }
         public IActionResult Detail(string alias, int id)
         {
-            var product = _unitOfWork.Product.Get(x=>x.Id == id,includeProperties: "CategoryProduct");
+            var product = _unitOfWork.Product.Get(x=>x.Id == id,includeProperties: "CategoryProduct,ProductImages");
             return View(product);
         }
         public IActionResult ProductCategory1(string alias, int ?id)

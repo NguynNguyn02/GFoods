@@ -13,6 +13,7 @@ namespace GFoods.DataAccess.Repository
         private readonly ApplicationDbContext _db;
         public ICategoryProductRepository CategoryProduct {  get; private set; }
         public IProductRepository Product {  get; private set; }
+        public IProductImagesRepository ProductImage {  get; private set; }
         public ICompanyRepository Company {  get; private set; }
         public IShoppingCartRepository ShoppingCart { get; private set; }
         public IApplicationUserRepository ApplicationUser { get; private set; }
@@ -26,6 +27,7 @@ namespace GFoods.DataAccess.Repository
             ApplicationUser = new ApplicationUserRepository(_db);
             CategoryProduct = new CategoryProductRepository(_db);
             Product = new ProductRepository(_db);
+            ProductImage = new ProductImagesRepository(_db);
             Company = new CompanyRepository(_db);
             OrderDetail = new OrderDetailRepository(_db);
             OrderHeader = new OrderHeaderRepository(_db);

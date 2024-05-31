@@ -10,6 +10,7 @@ namespace GFoods.DataAccess.Repository.IRepository
     {
         ICategoryProductRepository CategoryProduct { get; }
         IProductRepository Product { get; }
+        IProductImagesRepository ProductImage { get; }
         ICompanyRepository Company { get; }
         IShoppingCartRepository ShoppingCart { get; }
         IApplicationUserRepository ApplicationUser { get; }

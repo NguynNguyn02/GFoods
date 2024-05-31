@@ -22,7 +22,6 @@ namespace GFoods.Models
         public string Detail {  get; set; }
         public int Quantity { get; set; }
         [ValidateNever]
-        public string ImageUrl {  get; set; }
         public decimal OriginalPrice { get; set; }
         public decimal Price { get; set; }
         public decimal? PriceSale { get; set; }
@@ -49,6 +48,8 @@ namespace GFoods.Models
         [ForeignKey("CategoryProductId")]
         [ValidateNever]
         public CategoryProduct CategoryProduct { get; set; }
+        [ValidateNever]
+        public List<ProductImages> ProductImages { get; set; }
 
     }
 }
