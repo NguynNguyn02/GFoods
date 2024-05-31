@@ -1562,6 +1562,7 @@
     <None Include="wwwroot\clients\dist\js\pages\dashboard.js" />
     <None Include="wwwroot\clients\dist\js\pages\dashboard2.js" />
     <None Include="wwwroot\clients\dist\js\pages\dashboard3.js" />
+    <None Include="wwwroot\js\jsShopping.js" />
     <None Include="wwwroot\js\login.js" />
     <None Include="wwwroot\js\paymentOnline.js" />
   </ItemGroup>

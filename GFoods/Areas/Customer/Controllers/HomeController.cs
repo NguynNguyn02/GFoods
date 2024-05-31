@@ -31,7 +31,7 @@ namespace GFoods.Areas.Customer.Controllers
         {
             ShoppingCart cart = new()
             {
-                Product = _unitOfWork.Product.Get(x => x.Id == productId, includeProperties: "CategoryProduct"),
+                Product = _unitOfWork.Product.Get(x => x.Id == productId, includeProperties: "CategoryProduct,ProductImages"),
                 Count = 1,
                 ProductId = productId
             };
@@ -53,7 +53,6 @@ namespace GFoods.Areas.Customer.Controllers
             {
                 cartFromDb.Count += shoppingCart.Count;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
-
             }
             else
             {
@@ -64,10 +63,6 @@ namespace GFoods.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

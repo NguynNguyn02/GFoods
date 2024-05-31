@@ -1,7 +1,9 @@
 ﻿using GFoods.DataAccess.Repository.IRepository;
 using GFoods.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace GFoods.Areas.Customer.Controllers
 {
@@ -44,6 +46,34 @@ namespace GFoods.Areas.Customer.Controllers
             }
             ViewBag.CateId = id;
             return View(product);
+        }
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddToCart(int ProductId, int Count)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ShoppingCart shoppingCart = new ShoppingCart
+            {
+                ApplicationUserId = userId,
+                ProductId = ProductId,
+                Count = Count
+            };
+            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(
+                u => u.ApplicationUserId == userId &&
+                u.ProductId == ProductId);
+            if (cartFromDb != null)
+            {
+                cartFromDb.Count += Count;
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
+            }
+            else
+            {
+                _unitOfWork.ShoppingCart.Add(shoppingCart);
+            }
+            _unitOfWork.Save();
+            return Ok(new { success = true, message = "Thêm vào giỏ hàng thành công" });
         }
         public IActionResult Partial_ProductSale()
         {

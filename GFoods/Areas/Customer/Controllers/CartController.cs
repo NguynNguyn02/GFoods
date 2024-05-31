@@ -28,12 +28,11 @@ namespace GFoods.Areas.Customer.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
             ShoppingCartVM = new()
             {
-                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, includeProperties: nameof(Product)),
-                OrderHeader = new()
-
+                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, includeProperties: "Product"),
+                OrderHeader = new(),
+               
             };
             foreach (var item in ShoppingCartVM.ShoppingCartList)
             {
@@ -63,6 +62,9 @@ namespace GFoods.Areas.Customer.Controllers
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
+        
+        
+
         public IActionResult Minus(int cartId)
         {
             var cartofDB = _unitOfWork.ShoppingCart.Get(x => x.Id == cartId);
@@ -183,8 +185,8 @@ namespace GFoods.Areas.Customer.Controllers
         }
         public IActionResult OrderConfirmation(int id)
         {
-            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u=>u.Id == id,includeProperties:"ApplicationUser");
-            List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u=>u.ApplicationUserId==orderHeader.ApplicationUserId).ToList();
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id, includeProperties: "ApplicationUser");
+            List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
             _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
             _unitOfWork.Save();
             return View(id);
@@ -204,7 +206,7 @@ namespace GFoods.Areas.Customer.Controllers
                 var requestModelJson = TempData["RequestModel"].ToString();
                 var requestModel = JsonConvert.DeserializeObject<VnPaymentRequestModel>(requestModelJson);
                 OrderHeader header = _unitOfWork.OrderHeader.Get(u => u.Id == requestModel.OrderHeaderId, includeProperties: "ApplicationUser");
-                var orderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == requestModel.OrderHeaderId,includeProperties:"Product");
+                var orderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == requestModel.OrderHeaderId, includeProperties: "Product");
                 _unitOfWork.OrderHeader.Remove(header);
                 _unitOfWork.OrderDetail.RemoveRange(orderDetail);
                 _unitOfWork.Save();

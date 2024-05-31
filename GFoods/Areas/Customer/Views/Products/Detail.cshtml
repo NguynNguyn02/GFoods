@@ -93,6 +93,7 @@
                             <span id="quantity_value">1</span>
                             <span class="plus"><i class="fa fa-plus" aria-hidden="true"></i></span>
                         </div>
+                        <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryToken().ToString()" />
                         <div class="blue_button add_to_cart_blue_button"><a href="#" class="btnAddToCart" data-id="@Model.Id">Thêm vào giỏ</a></div>
                         <div class="product_favorite d-flex flex-column align-items-center justify-content-center"></div>
                     </div>
