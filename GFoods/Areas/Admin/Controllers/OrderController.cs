@@ -30,14 +30,14 @@ namespace GFoods.Areas.Admin.Controllers
             OrderVM = new OrderVM()
             {
                 OrderHeader = _unitOfWork.OrderHeader.Get(x => x.Id == orderId, includeProperties: "ApplicationUser"),
-                OrderDetail = _unitOfWork.OrderDetail.GetAll(x => x.OrderHeaderId == orderId,includeProperties:"Product")
+                OrderDetail = _unitOfWork.OrderDetail.GetAll(x => x.OrderHeaderId == orderId, includeProperties: "Product")
             };
             return View(OrderVM);
         }
         [HttpPost]
-        [Authorize(Roles =SD.Role_Admin+"," + SD.Role_Employee)]
-		public IActionResult UpdateOrderDetail()
-		{
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        public IActionResult UpdateOrderDetail()
+        {
             var orderHeaderFromDb = _unitOfWork.OrderHeader.Get(x => x.Id == OrderVM.OrderHeader.Id);
             orderHeaderFromDb.Name = OrderVM.OrderHeader.Name;
             orderHeaderFromDb.PhoneNumber = OrderVM.OrderHeader.PhoneNumber;
@@ -56,8 +56,8 @@ namespace GFoods.Areas.Admin.Controllers
             _unitOfWork.OrderHeader.Update(orderHeaderFromDb);
             _unitOfWork.Save();
             TempData["Success"] = "Cập nhật đơn hàng thành công";
-            return RedirectToAction(nameof(Details), new {orderId=orderHeaderFromDb.Id});
-		}
+            return RedirectToAction(nameof(Details), new { orderId = orderHeaderFromDb.Id });
+        }
 
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
@@ -68,15 +68,25 @@ namespace GFoods.Areas.Admin.Controllers
             TempData["Success"] = "Cập nhật đơn hàng thành công";
             return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
         }
+
+        [HttpPost]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        public IActionResult Approve()
+        {
+            _unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, SD.StatusApproved);
+            _unitOfWork.Save();
+            TempData["Success"] = "Cập nhật đơn hàng thành công";
+            return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
+        }
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         public IActionResult ShipOrder()
         {
             var orderHeader = _unitOfWork.OrderHeader.Get(x => x.Id == OrderVM.OrderHeader.Id);
             orderHeader.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
-            orderHeader.Carrier=OrderVM.OrderHeader.Carrier;
+            orderHeader.Carrier = OrderVM.OrderHeader.Carrier;
             orderHeader.OrderStatus = SD.StatusShipped;
-            orderHeader.ShippingDate=DateTime.Now;
+            orderHeader.ShippingDate = DateTime.Now;
             if (orderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment)
             {
                 orderHeader.PaymentDueDate = DateOnly.FromDateTime(DateTime.Now.AddDays(30));
@@ -84,10 +94,20 @@ namespace GFoods.Areas.Admin.Controllers
             _unitOfWork.OrderHeader.Update(orderHeader);
             _unitOfWork.Save();
             TempData["Success"] = "Đơn hàng đã vận chuyển thành công!";
-
-            _unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, SD.StatusShipped);
+            var orderDetail = _unitOfWork.OrderDetail.GetAll(x => x.OrderHeaderId == OrderVM.OrderHeader.Id);
+            foreach (var item in orderDetail)
+            {
+                var product = _unitOfWork.Product.Get(x => x.Id == item.ProductId);
+                if (product.Quantity > item.Count)
+                {
+                    product.Quantity -= item.Count;
+                }
+                else
+                {
+                    TempData["Error"] = "Cần nhập thêm hàng! Hàng trong kho không đủ!";
+                }
+            }
             _unitOfWork.Save();
-            TempData["Success"] = "Cập nhật đơn hàng thành công";
             return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
         }
         [HttpPost]
@@ -104,6 +124,8 @@ namespace GFoods.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Details_Pay_Now()
         {
+            OrderVM.OrderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == OrderVM.OrderHeader.Id, includeProperties: "ApplicationUser");
+            OrderVM.OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeader.Id == OrderVM.OrderHeader.Id, includeProperties: "Product");
             return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
 
         }
@@ -112,17 +134,7 @@ namespace GFoods.Areas.Admin.Controllers
         public IActionResult GetAll(string status)
         {
             IEnumerable<OrderHeader> objOrderHeader;
-            if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
-            {
-                objOrderHeader = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser").ToList();
-            }
-            else
-            {
-                var claimsIdentity = (ClaimsIdentity)User.Identity;
-                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-                objOrderHeader = _unitOfWork.OrderHeader.GetAll(x => x.ApplicationUserId == userId,includeProperties:"ApplicationUser");
-            }
-            
+            objOrderHeader = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser").ToList();
             switch (status)
             {
                 case "pending":

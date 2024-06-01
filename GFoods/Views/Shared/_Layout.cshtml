@@ -1,97 +1,4 @@
-﻿@* <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - GFoods</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/GFoods.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.min.css" />
-
-    @await RenderSectionAsync("Scripts", required: false)
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-light border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GFoods</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Customer" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Order" asp-action="Index">Order</a>
-                        </li>
-                        @if (User.IsInRole(SD.Role_Admin))
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Content Managment
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="Admin" asp-controller="CategoryProduct" asp-action="Index">CategoryProduct</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="Admin" asp-controller="Product" asp-action="Index">Product</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="Admin" asp-controller="Company" asp-action="Index">Company</a>
-                                    </li>
-
-                                </ul>
-                            </li>
-                        }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Customer" asp-controller="Cart" asp-action="Index">
-                                <i class="bi bi-cart"></i>&nbsp;(0)
-                            </a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            <div id="menuTop"></div>
-            <partial name="_Notification" />
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            GFoods - Tinh hoa đặc sản Việt
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.tiny.cloud/1/n94ifuzvl80pchikopiwgz2esrw8n28dwcywvpejlqrregfp/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.min.js" asp-append-version="true"></script>
-    @* @await RenderSectionAsync("Scripts", required: false)
-
-
-
-</body>
-</html> *@
-
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Colo Shop</title>
@@ -128,7 +35,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="top_nav_left">free shipping on all u.s orders over $50</div>
+                            <div class="top_nav_left">Hotline:0914992862</div>
                         </div>
                         <div class="col-md-6 text-right">
                             <div class="top_nav_right">
@@ -152,23 +59,21 @@
                     <div class="row">
                         <div class="col-lg-12 text-right">
                             <div class="logo_container">
-                                <a href="#">Trung<span>shop</span></a>
+                                <a href="#">GFood<span>s</span></a>
                             </div>
                             <nav class="navbar">
                                 <div id="menuTop"></div>@*MenuTop*@
                                 <ul class="navbar_user">
                                     <li id="identityAccount">
-                                        <a href="#">
-                                            <i class="fa fa-user">
-
-                                            </i>
+                                        <a asp-area="Customer" asp-action="Index" asp-controller="Order">
+                                            <i class="bi bi-calendar2-minus"></i>
                                         </a>
                                     </li>
                                     <li class="checkout">
                                         <a href="/gio-hang">
                                             <i class="fa fa-shopping-cart" aria-hidden="true">
                                             </i>
-                                            <span id="checkout_items" class="checkout_items">2</span>
+                                            <span id="checkout_items" class="checkout_items"></span>
                                         </a>
                                     </li>
                                 </ul>

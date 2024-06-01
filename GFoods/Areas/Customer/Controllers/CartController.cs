@@ -211,7 +211,6 @@ namespace GFoods.Areas.Customer.Controllers
                 _unitOfWork.OrderDetail.RemoveRange(orderDetail);
                 _unitOfWork.Save();
                 return RedirectToAction(nameof(PaymentFail));
-
             }
             if (TempData["RequestModel"] != null || TempData["OrderDetail"] != null)
             {
@@ -221,7 +220,7 @@ namespace GFoods.Areas.Customer.Controllers
                 var orderDetail = JsonConvert.DeserializeObject<OrderDetail>(orderDetailJson);
                 ViewData["RequestModel"] = requestModel;
                 OrderHeader header = _unitOfWork.OrderHeader.Get(u => u.Id == requestModel.OrderHeaderId, includeProperties: "ApplicationUser");
-                header.OrderStatus = SD.StatusPending;
+                header.OrderStatus = SD.StatusApproved;
                 header.PaymentStatus = SD.PaymentStatusApproved;
                 _unitOfWork.OrderHeader.Update(header);
                 _unitOfWork.Save();
