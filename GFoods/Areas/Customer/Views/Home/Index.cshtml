@@ -22,7 +22,7 @@
     }
 
     .benefit_item {
-        background: #61974C;
+        background: #61974C!important;
     }
 
     .benefit_icon i {
@@ -75,6 +75,7 @@
         height: 800px;
     }
 </style>
+<link rel="stylesheet" type="text/css" href="~/assets/styles/main_styles.css">
 <!-- Slider -->
 <div id="carouselExampleControls" style="height:459px" class="main_slider carousel slide" data-ride="carousel">
     <div class="carousel-inner fill_height">
@@ -193,6 +194,12 @@
     </div>
 </div>
 <div style="background-image: url(https://www.huho.vn/wp-content/uploads/2023/04/bg_cate.jpg);" id="saleproduct"></div>
+<div class="new_arrivals">
+    <div class="container">
+        <div id="menuArrivals"></div>
+        @* @Html.Action("MenuArrivals", "Menu") *@
+    </div>
+</div>
 @section css {
     <link rel="stylesheet" type="text/css" href="~/assets/styles/bootstrap4/bootstrap.min.css">
     <link href="~/assets/plugins/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -205,6 +212,10 @@
 }
 @section Scripts{
     <script>
-        $("#saleproduct").load("/customer/Products/Partial_ProductSale");
+        $(document).ready(function () {
+            $("#saleproduct").load("/customer/Products/Partial_ProductSale");
+            $("#menuArrivals").load("/customer/Menu/MenuArrivals");
+
+        });
     </script>
 }

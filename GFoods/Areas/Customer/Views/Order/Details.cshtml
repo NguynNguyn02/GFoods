@@ -237,9 +237,9 @@
                                 </li>
                             </ul>
                             @if (Model.OrderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment &&
-                            Model.OrderHeader.OrderStatus == SD.StatusShipped)
+                            (Model.OrderHeader.OrderStatus == SD.StatusShipped || @Model.OrderHeader.OrderStatus == SD.StatusApproved))
                             {
-                                <button type="submit" class="btn btn-success form-control my-1">Thanh toán ngay</button>
+                                <button asp-action="Details_Pay_Now" type="submit" class="btn btn-success form-control my-1">Thanh toán ngay</button>
                             }
                             @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
                             {

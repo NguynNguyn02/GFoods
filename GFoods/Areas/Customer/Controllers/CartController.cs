@@ -91,10 +91,9 @@ namespace GFoods.Areas.Customer.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
             ShoppingCartVM = new()
             {
-                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, includeProperties: nameof(Product)),
+                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, includeProperties: "Product"),
                 OrderHeader = new()
 
             };
@@ -118,11 +117,10 @@ namespace GFoods.Areas.Customer.Controllers
         [ActionName("Summary")]
         public IActionResult SummaryPOST(ShoppingCartVM shoppingCartVM, string payment)
         {
-
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            ShoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, includeProperties: nameof(Product));
+            ShoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, includeProperties: "Product");
 
             ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
             ShoppingCartVM.OrderHeader.ApplicationUserId = userId;
@@ -175,8 +173,6 @@ namespace GFoods.Areas.Customer.Controllers
             }
             _unitOfWork.OrderHeader.Update(ShoppingCartVM.OrderHeader);
             _unitOfWork.Save();
-
-
             return RedirectToAction(nameof(OrderConfirmation), new { id = ShoppingCartVM.OrderHeader.Id });
         }
         public IActionResult PaymentOnline()
@@ -198,7 +194,7 @@ namespace GFoods.Areas.Customer.Controllers
         [Authorize]
         public IActionResult PaymentCallBack()
         {
-            var response = _vnPayService.PaymentExcute(Request.Query);
+            var response = _vnPayService.PaymentExcute(Request.Query);  
 
             if (response == null || response.VnPayResponseCode != "00")
             {
@@ -223,7 +219,7 @@ namespace GFoods.Areas.Customer.Controllers
                 header.OrderStatus = SD.StatusApproved;
                 header.PaymentStatus = SD.PaymentStatusApproved;
                 _unitOfWork.OrderHeader.Update(header);
-                _unitOfWork.Save();
+                _unitOfWork.Save(); 
                 TempData["Success"] = "Thanh toán VNPAY thành công!";
                 return RedirectToAction(nameof(OrderConfirmation), new { id = requestModel.OrderHeaderId });
             }

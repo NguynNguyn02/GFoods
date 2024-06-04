@@ -1,6 +1,7 @@
 ﻿using GFoods.DataAccess.Repository.IRepository;
 using GFoods.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -12,6 +13,7 @@ namespace GFoods.Areas.Customer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        
 
         public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
@@ -26,6 +28,15 @@ namespace GFoods.Areas.Customer.Controllers
             //return View(productList);
             return View();
 
+        }
+        
+        public  IActionResult Coin()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = _unitOfWork.ApplicationUser.Get(x=>x.Id == userId);
+            var coin = user.Coin;
+            return PartialView("_coinPartialView",coin);
         }
         public IActionResult Details(int productId)
         {

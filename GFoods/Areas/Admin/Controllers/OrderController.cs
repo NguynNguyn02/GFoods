@@ -5,6 +5,7 @@ using GFoods.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -15,6 +16,7 @@ namespace GFoods.Areas.Admin.Controllers
     public class OrderController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+
         [BindProperty]
         public OrderVM OrderVM { get; set; }
         public OrderController(IUnitOfWork unitOfWork)
@@ -115,20 +117,24 @@ namespace GFoods.Areas.Admin.Controllers
         public IActionResult CancelOrder()
         {
             var orderHeader = _unitOfWork.OrderHeader.Get(x => x.Id == OrderVM.OrderHeader.Id);
+            var user= _unitOfWork.ApplicationUser.Get(x=>x.Id == orderHeader.ApplicationUserId);
 
-
+            if (orderHeader.PaymentStatus == SD.StatusApproved)
+            {
+                user.Coin += orderHeader.OrderTotal;
+                orderHeader.PaymentStatus = SD.PaymentStatusRejected;
+                orderHeader.OrderStatus = SD.StatusRefunded;
+            }
+            if (orderHeader.PaymentStatus == SD.StatusPending || orderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment)
+            {
+                orderHeader.PaymentStatus = SD.PaymentStatusRejected;
+                orderHeader.OrderStatus = SD.StatusCancelled;
+            }
+            _unitOfWork.OrderHeader.Update(orderHeader);
+            _unitOfWork.Save();
             return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
-
         }
-        [ActionName("Details")]
-        [HttpPost]
-        public IActionResult Details_Pay_Now()
-        {
-            OrderVM.OrderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == OrderVM.OrderHeader.Id, includeProperties: "ApplicationUser");
-            OrderVM.OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeader.Id == OrderVM.OrderHeader.Id, includeProperties: "Product");
-            return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
-
-        }
+        
         #region API CALLS
         [HttpGet]
         public IActionResult GetAll(string status)

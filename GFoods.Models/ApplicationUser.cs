@@ -25,5 +25,6 @@ namespace GFoods.Models
         public Company? Company { get; set; }
         [NotMapped]
         public string Role { get; set; }
+        public double Coin { get; set; } = 0;
     }
 }

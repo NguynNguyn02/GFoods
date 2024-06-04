@@ -77,8 +77,13 @@ namespace GFoods.Areas.Customer.Controllers
         }
         public IActionResult Partial_ProductSale()
         {
-            var items = _unitOfWork.Product.GetAll(x => x.IsSale && x.IsHome,includeProperties: "CategoryProduct").ToList();
+            var items = _unitOfWork.Product.GetAll(x => x.IsSale && x.IsHome,includeProperties: "CategoryProduct,ProductImages").ToList();
             return PartialView("_Partial_ProductSale",items);
+        }
+        public IActionResult Partial_ItemsByCateId()
+        {
+            var items = _unitOfWork.Product.GetAll(includeProperties: "CategoryProduct,ProductImages").ToList();
+            return PartialView("_Partial_ItemsByCateId", items);
         }
 
     }

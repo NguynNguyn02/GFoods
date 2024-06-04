@@ -2,7 +2,15 @@
 
 @{
     var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    var coin = Model.ShoppingCartList.FirstOrDefault()?.ApplicationUser.Coin ?? 0;
+    var total = Model.OrderHeader.OrderTotal;
 }
+<style>
+    main {
+        margin-top: 150px;
+    }
+
+</style>
 
 <form method="post">
     <br />
@@ -30,7 +38,7 @@
                             </div>
                             <div class="row my-1">
                                 <div class="col-3">
-                                    <label>Name</label>
+                                    <label>Tên</label>
                                 </div>
                                 <div class="col-9">
                                     <input asp-for="OrderHeader.Name" class="form-control" />
@@ -39,7 +47,7 @@
                             </div>
                             <div class="row my-1">
                                 <div class="col-3">
-                                    <label>Phone</label>
+                                    <label>Điện thoại</label>
                                 </div>
                                 <div class="col-9">
                                     <input asp-for="OrderHeader.PhoneNumber" class="form-control" />
@@ -48,7 +56,7 @@
                             </div>
                             <div class="row my-1">
                                 <div class="col-3">
-                                    <label>Street Address</label>
+                                    <label>Địa chỉ</label>
                                 </div>
                                 <div class="col-9">
                                     <input asp-for="OrderHeader.StreetAddress" class="form-control" />
@@ -57,7 +65,7 @@
                             </div>
                             <div class="row my-1">
                                 <div class="col-3">
-                                    <label>City</label>
+                                    <label>Thành phố</label>
                                 </div>
                                 <div class="col-9">
                                     <input asp-for="OrderHeader.City" class="form-control" />
@@ -75,19 +83,12 @@
                             </div>
                             <div class="row my-1">
                                 <div class="col-3">
-                                    <label>Postal Code</label>
+                                    <label>Mã bưu điện</label>
                                 </div>
                                 <div class="col-9">
                                     <input asp-for="OrderHeader.PostalCode" class="form-control" />
                                     <span asp-validation-for="OrderHeader.PostalCode" class="text-danger"></span>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Hình thức thanh toán</label>
-                                <select class="form-control" name="TypePayment" id="drTypePayment">
-                                    <option value="1" selected>COD</option>
-                                    <option value="2">Chuyển khoản</option>
-                                </select>
                             </div>
                         </div>
                         <div class="col-12 col-lg-5 offset-lg-1">
@@ -105,26 +106,31 @@
                                         <span class="text-muted">@((details.Price * details.Count).ToString("#,### VNĐ", info)) </span>
                                     </li>
                                 }
+
+                                <li class="list-group-item d-flex justify-content-between bg-light">
+                                    Dùng xu<input type="checkbox" id="coinCheckbox" class="text-info fw-bold" />
+                                </li>
+                                <li class="list-group-item  justify-content-between bg-light showcoin" hidden>
+                                    <small class="text-muted">Xu: @coin</small>
+                                    <span class="text-muted"></span>
+                                </li>
+                                </li>
                                 <li class="list-group-item d-flex justify-content-between bg-light">
                                     <small class="text-info fw-bold">Tổng tiền</small>
-                                    <strong class="text-info">@Model.OrderHeader.OrderTotal.ToString("#,### VNĐ", info)</strong>
+                                    <strong id="totalAmount" data-total="@total" data-coin="@coin" class="text-info">@total.ToString("#,### VNĐ", info)</strong>
                                 </li>
 
                             </ul>
-                            <input type="button" id="qrcode" class="btn btn-primary">
-                            @Model.OrderHeader.ApplicationUser.Id
-                            </input>
-                            <img src="#" class="item_test" />
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <div class="card-footer">
                 <div class="row">
                     <div class="col-12 col-md-8 pt-2">
                         <p style="color:maroon; font-size:14px;">
-                            Estimate Arrival Date:
+                            Dự kiến ngày nhận hàng
                             @DateTime.Now.AddDays(7).ToShortDateString() - @DateTime.Now.AddDays(14).ToShortDateString()
                         </p>
                     </div>
@@ -143,50 +149,23 @@
 
 @section scripts {
     <script>
-        let My_Bank = {
-            BANK_ID: "MB",
-            ACCOUNT_NO: "8290137914023",
-            TEMPLATE: "compact2"
-        };
-        const qrImg = document.querySelector(".item_test");
-        var contentText = Math.floor(Math.random() * 100) * Math.floor(Math.random() * 100) * Math.floor(Math.random() * 100);
         $(document).ready(function () {
-            $('body').on('click', '#qrcode', function () {
-                let paidPrice = @Model.OrderHeader.OrderTotal;
-                let paidContent = `GD` + contentText;
-                let qr = `https://img.vietqr.io/image/${My_Bank.BANK_ID}-${My_Bank.ACCOUNT_NO}-${My_Bank.TEMPLATE}.png?amount=${paidPrice}&addInfo=${paidContent}`;
-                qrImg.src = qr;
-                setTimeout(() => {
-                    setInterval(() => {
-                        checkPair(paidPrice, paidContent);
-                    }, 1000);
-                }, 10000);
-            });
-            let isSuccess = false;
-            async function checkPair(price, content) {
-                if (isSuccess) {
-                    return;
-                } else {
-                    try {
-                        const response = await fetch(
-                            "https://script.googleusercontent.com/macros/echo?user_content_key=0b5XsvekwDnKOt1PZJovG1ZGIPrZx3yBePPqm87460zbztuKHNcN0_aDs3oK6D3aG7UkdbMNfflC0EHrJN2R7LqjI7yLG7TLm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnP07XCWoNrHBGXIJSNNkrE6y1XXlCHNglL07Qm_A43M9mw1ioVrToqQb_ebMfAliHUzKpg4piWtSrwyszSGt52ecrsuLqI4OQtz9Jw9Md8uu&lib=MJGfEvd_fNRVIWcTCkJ8PqKlt3FBmEMnE"
-                        );
-                        const data = await response.json();
-                        const lastPaid = data.data[data.data.length - 1];
-                        lastPrice = lastPaid["Giá trị"];
-                        lastContent = lastPaid["Mô tả"];
-                        if (lastPrice >= price && lastContent.includes(content)) {
-                            alert("Thanh toán thành công");
-                            isSuccess = true;
-                        } else {
-                            console.log("Không thành công")
-                        }
-                    } catch {
-                        console.log("Lỗi")
-                    }
-                }
-            }
-        });
+            $('#coinCheckbox').change(function () {
+                var showCoinElement = $('.showcoin');
+                var totalElement = $('#totalAmount');
+                var originalTotal = parseFloat(totalElement.data('total'));
+                var coin = parseFloat(totalElement.data('coin'));
 
+                if ($(this).is(':checked')) {
+                    showCoinElement.removeAttr('hidden');
+                    var newTotal = originalTotal - coin;
+                    totalElement.text(newTotal.toLocaleString('vi-VN') + " VNĐ");
+                } else {
+                    showCoinElement.attr('hidden', true);
+                    totalElement.text(originalTotal.toLocaleString('vi-VN') + " VNĐ");
+                }
+            });
+
+        });
     </script>
 }

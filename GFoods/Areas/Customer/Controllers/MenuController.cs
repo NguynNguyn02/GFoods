@@ -43,12 +43,12 @@ namespace GFoods.Areas.Customer.Controllers
             return PartialView("_MenuLeft", items);
 
         }
-        //public IActionResult MenuArrivals()
-        //{
-        //    var items = db.ProductCategories.ToList();
+        public IActionResult MenuArrivals()
+        {
+            var items = _unitOfWork.CategoryProduct.GetAll().ToList();
 
-        //    return PartialView("_MenuArrivals", items);
+            return PartialView("_MenuArrivals", items);
 
-        //}
+        }
     }
 }

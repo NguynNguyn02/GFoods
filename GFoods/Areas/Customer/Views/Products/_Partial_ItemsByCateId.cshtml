@@ -1,0 +1,43 @@
+﻿@model List<Product>
+@{
+    var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+@if (Model.Any() && Model != null)
+{
+
+    foreach (var item in Model)
+    {
+        <div class="product-item @item.CategoryProduct.Alias">
+            <div class="product discount product_filter">
+                <div class="product_image">
+                    <a href="/chi-tiet/@item.Alias-p@(item.Id)"><img src="@item.ProductImages.FirstOrDefault().ImageUrl" width="200" height="200" alt="@item.Alias"></a>
+                </div>
+                <div class="favorite favorite_left"></div>
+                @if (item.IsSale)
+                {
+                    <div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center"><span>sale</span></div>
+                }
+
+                <div class="product_info">
+                    <h6 class="product_name"><a href="/chi-tiet/@item.Alias-p@(item.Id)">@item.Title</a></h6>
+                    @if (item.IsSale)
+                    {
+                        string formattedPriceSale = @item.PriceSale.HasValue ? @item.PriceSale.Value.ToString("C", info) : "N/A";
+                        string formatterPrice = @item.Price.ToString("C", info);
+
+                        <div class="product_price">@formattedPriceSale<span>@formatterPrice</span></div>
+                    }
+                    else
+                    {
+                        <div class="product_price">
+                            @item.Price.ToString("C", info)
+                        </div>
+                        <div hidden class="in_product_price">@item.Price</div>
+                    }
+                </div>
+                <div class="red_button add_to_cart_button"><a href="#" class="btnAddToCart" data-id="@item.Id">Thêm vào giỏ</a></div>
+            </div>
+        </div>
+
+    }
+}
