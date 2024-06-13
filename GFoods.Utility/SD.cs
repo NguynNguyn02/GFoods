@@ -25,5 +25,8 @@ namespace GFoods.Utility
 		public const string PaymentStatusApproved = "Approved";//Đã thanh toán
 		public const string PaymentStatusDelayedPayment = "ApprovedForDelayedPayment";//Đã duyệt cho thanh toán sau
 		public const string PaymentStatusRejected = "Rejected";//Bị từ chối thanh toán
+
+
+		public const string SessionCart = "SessionShoppingCart";
 	}
 }

@@ -20,6 +20,15 @@ builder.Services.ConfigureApplicationCookie(option =>
     option.LogoutPath = $"/Identity/Account/Logout";
     option.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(option =>
+{
+    option.IdleTimeout = TimeSpan.FromSeconds(100);
+    option.Cookie.HttpOnly = true;
+    option.Cookie.IsEssential = true;
+});
+ 
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services
@@ -41,6 +50,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 app.MapRazorPages();
 
 app.MapControllerRoute(

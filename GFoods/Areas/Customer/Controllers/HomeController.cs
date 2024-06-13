@@ -1,6 +1,8 @@
 ﻿using GFoods.DataAccess.Repository.IRepository;
 using GFoods.Models;
+using GFoods.Utility;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -13,7 +15,7 @@ namespace GFoods.Areas.Customer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
-        
+
 
         public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
@@ -29,14 +31,14 @@ namespace GFoods.Areas.Customer.Controllers
             return View();
 
         }
-        
-        public  IActionResult Coin()
+
+        public IActionResult Coin()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var user = _unitOfWork.ApplicationUser.Get(x=>x.Id == userId);
+            var user = _unitOfWork.ApplicationUser.Get(x => x.Id == userId);
             var coin = user.Coin;
-            return PartialView("_coinPartialView",coin);
+            return PartialView("_coinPartialView", coin);
         }
         public IActionResult Details(int productId)
         {
@@ -62,15 +64,21 @@ namespace GFoods.Areas.Customer.Controllers
                 u.ProductId == shoppingCart.ProductId);
             if (cartFromDb != null)
             {
+                //shopping cart exists
                 cartFromDb.Count += shoppingCart.Count;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
+                _unitOfWork.Save();
+
             }
             else
             {
+                //add cart record
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
+                _unitOfWork.Save();
+                HttpContext.Session.SetInt32(SD.SessionCart, _unitOfWork.ShoppingCart.GetAll(
+                u => u.ApplicationUserId == userId).Count());
             }
             TempData["success"] = "Giỏ hàng đã cập nhật thành công!";
-            _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
 

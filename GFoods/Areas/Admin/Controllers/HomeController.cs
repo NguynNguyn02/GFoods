@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GFoods.Utility;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GFoods.Areas.Admin.Controllers
 {
-    [Area("Admin")] 
+    [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
+
     public class HomeController : Controller
     {
         public IActionResult Index()

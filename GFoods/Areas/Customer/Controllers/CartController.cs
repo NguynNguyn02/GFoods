@@ -67,10 +67,13 @@ namespace GFoods.Areas.Customer.Controllers
 
         public IActionResult Minus(int cartId)
         {
-            var cartofDB = _unitOfWork.ShoppingCart.Get(x => x.Id == cartId);
+            var cartofDB = _unitOfWork.ShoppingCart.Get(x => x.Id == cartId, tracked: true);
             if (cartofDB.Count <= 1)
             {
+
                 _unitOfWork.ShoppingCart.Remove(cartofDB);
+                HttpContext.Session.SetInt32(SD.SessionCart,
+                _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cartofDB.ApplicationUserId).Count() - 1);
             }
             else
             {
@@ -82,8 +85,10 @@ namespace GFoods.Areas.Customer.Controllers
         }
         public IActionResult Remove(int cartId)
         {
-            var cartofDB = _unitOfWork.ShoppingCart.Get(x => x.Id == cartId);
+            var cartofDB = _unitOfWork.ShoppingCart.Get(x => x.Id == cartId,tracked:true);
             _unitOfWork.ShoppingCart.Remove(cartofDB);
+            HttpContext.Session.SetInt32(SD.SessionCart,
+                _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cartofDB.ApplicationUserId).Count()-1);
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }

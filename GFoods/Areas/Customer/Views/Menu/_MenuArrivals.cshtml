@@ -1,44 +1,9 @@
 ﻿@model List<CategoryProduct>
 
+
+
 @if (Model != null && Model.Any())
 {
-    <style>
-        .red_button {
-            background: #61974C;
-        }
-
-            .red_button:hover {
-                background: #61974C !important;
-            }
-
-        .grid_sorting_button {
-            background: #61974C;
-            color: aliceblue;
-        }
-
-            .grid_sorting_button.active {
-                background: #61974C;
-                color: black;
-            }
-
-                .grid_sorting_button.active:hover {
-                    background: #61974C !important;
-                }
-
-            .grid_sorting_button:first-child {
-                margin-left: 0px;
-                background: #61974C;
-            }
-
-            .grid_sorting_button:last-child {
-                background: #61974C;
-            }
-
-        .section_title::after {
-            background: #61974C;
-        }
-    </style>
-
     <div class="row">
         <div class="col text-center">
             <div class="section_title new_arrivals_title">
@@ -62,24 +27,15 @@
 
     <div class="row">
         <div class="col">
-            <div class="product-grid" data-isotope='{ "itemSelector": ".product-item", "layoutMode": "fitRows" }'>
-                <div id="partialviewItemById"></div>
-                <div class="red_button add_to_cart_button"><a href="#">Thêm vào giỏ</a></div>
+            <div class="product-grid" data-isotope='{ "itemSelector": ".product-item", "layoutMode": "fitRows" }' id="partialviewItemById">
             </div>
         </div>
     </div>
-    <p>
-        <a href="/san-pham">
-            <span class="more">
-                Xem thêm
-            </span>
-        </a>
-    </p>
+    
 }
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('#partialviewItemById').load("/customer/Products/Partial_ItemsByCateId");
-        }
-    </script>
-}
+
+<script>
+    $(document).ready(function () {
+        $("#partialviewItemById").load("/customer/Products/Partial_ItemsByCateId");
+    });
+</script>

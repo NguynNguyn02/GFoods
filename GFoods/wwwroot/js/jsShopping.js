@@ -17,15 +17,16 @@
                 Count: Quantity,
                 __RequestVerificationToken: token
             },
-            success: function (response) {
-                if (response.success) {
-                    toastr.success(response.message);
+            success: function (rs) {
+                if (rs.success) {
+                    toastr.success(rs.message);
+                    window.location.reload();
                 }
             },
 
         })
     })
-   
+
 });
 
 

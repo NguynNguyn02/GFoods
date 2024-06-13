@@ -1,5 +1,6 @@
 ﻿using GFoods.DataAccess.Repository.IRepository;
 using GFoods.Models;
+using GFoods.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,23 +24,23 @@ namespace GFoods.Areas.Customer.Controllers
             List<Product> listProduct = _unitOfWork.Product.GetAll(includeProperties: "CategoryProduct,ProductImages").ToList();
             if (id != null)
             {
-                listProduct = listProduct.Where(x=>x.CategoryProductId == id).ToList();
+                listProduct = listProduct.Where(x => x.CategoryProductId == id).ToList();
             }
             return View(listProduct);
         }
         public IActionResult Detail(string alias, int id)
         {
-            var product = _unitOfWork.Product.Get(x=>x.Id == id,includeProperties: "CategoryProduct,ProductImages");
+            var product = _unitOfWork.Product.Get(x => x.Id == id, includeProperties: "CategoryProduct,ProductImages");
             return View(product);
         }
-        public IActionResult ProductCategory1(string alias, int ?id)
+        public IActionResult ProductCategory1(string alias, int? id)
         {
             var product = _unitOfWork.Product.GetAll(includeProperties: "CategoryProduct");
             if (id > 0)
             {
                 product = product.Where(x => x.CategoryProductId == id).ToList();
             }
-            var cate = _unitOfWork.CategoryProduct.Get(x=>x.Id==id);
+            var cate = _unitOfWork.CategoryProduct.Get(x => x.Id == id);
             if (cate != null)
             {
                 ViewBag.CateName = cate.Name;
@@ -52,6 +53,11 @@ namespace GFoods.Areas.Customer.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddToCart(int ProductId, int Count)
         {
+            var code = new
+            {
+                success = false,
+                message = ""
+            };
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             ShoppingCart shoppingCart = new ShoppingCart
@@ -67,18 +73,23 @@ namespace GFoods.Areas.Customer.Controllers
             {
                 cartFromDb.Count += Count;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
+                _unitOfWork.Save();
             }
             else
             {
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
+                _unitOfWork.Save();
+                HttpContext.Session.SetInt32(SD.SessionCart,
+                _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count());
             }
             _unitOfWork.Save();
-            return Ok(new { success = true, message = "Thêm vào giỏ hàng thành công" });
+            code = new { success = true, message = "Thêm vào giỏ hàng thành công" };
+            return Json(code);
         }
         public IActionResult Partial_ProductSale()
         {
-            var items = _unitOfWork.Product.GetAll(x => x.IsSale && x.IsHome,includeProperties: "CategoryProduct,ProductImages").ToList();
-            return PartialView("_Partial_ProductSale",items);
+            var items = _unitOfWork.Product.GetAll(x => x.IsSale && x.IsHome, includeProperties: "CategoryProduct,ProductImages").ToList();
+            return PartialView("_Partial_ProductSale", items);
         }
         public IActionResult Partial_ItemsByCateId()
         {
