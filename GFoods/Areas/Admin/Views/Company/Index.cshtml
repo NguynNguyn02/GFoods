@@ -7,18 +7,17 @@
             </div>
         </div>
     </div>
-
-    <div class="card-body p-4">
-        <div class="row">
-            <div class="col-6">
-                
-            </div>
-            <div class="col-6 text-end">
-                <a asp-controller="Company" asp-action="Upsert" class="btn btn-primary">
-                    <i class="bi bi-plus-circle-fill"></i> Tạo công ty mới
-                </a>
-            </div>
+    <div class="row">
+        <div class="col-10">
         </div>
+        <div class="col-2 text-end">
+            <a asp-controller="Company" asp-action="Upsert" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> Tạo công ty mới
+            </a>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        
         <table id="tblData" class="table table-bordered table-striped" style="width="100%">
             <thead>
                 <tr>

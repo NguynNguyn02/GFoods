@@ -36,9 +36,21 @@
             <div class="top_nav">
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="top_nav_left">Hotline:0914992862</div>
-                        </div>
+                        @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
+                        {
+                            <div class="col-md-4">
+                                <div class="top_nav_left">Hotline:0914992862</div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="top_nav_left"><a asp-area="Admin" asp-controller="Home" asp-action="Index" class="text-white">Trang quản trị</a></div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-md-6">
+                                <div class="top_nav_left">Hotline:0914992862</div>
+                            </div>
+                        }
                         <div class="col-md-6 text-right">
                             <div class="top_nav_right">
                                 <ul class="top_nav_menu">
@@ -67,7 +79,8 @@
                                 </a>
                             </div>
                             <nav class="navbar">
-                                <div id="menuTop"></div>@*MenuTop*@
+                                <div id="menuTop"></div>
+                                @*MenuTop*@
                                 <ul class="navbar_user">
                                     <li id="identityAccount">
                                         <a asp-area="Customer" asp-action="Index" asp-controller="Order">

@@ -56,6 +56,7 @@ namespace GFoods.Areas.Customer.Controllers
         }
         public IActionResult OrderConfirmation(int id)
         {
+            HttpContext.Session.Clear();
             return View(id);
         }
         public IActionResult PaymentFail()

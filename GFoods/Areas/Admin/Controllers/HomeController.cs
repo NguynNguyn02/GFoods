@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GFoods.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = SD.Role_Admin)]
+    [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
 
     public class HomeController : Controller
     {
@@ -13,9 +13,6 @@ namespace GFoods.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult Index1()
-        {
-            return View();
-        }
+        
     }
 }
