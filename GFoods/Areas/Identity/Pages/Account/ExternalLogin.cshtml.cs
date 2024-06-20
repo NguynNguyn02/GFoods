@@ -169,7 +169,7 @@ namespace GFoods.Areas.Identity.Pages.Account
                 user.City = Input.City;
                 user.PostalCode = Input.PostalCode;
                 user.Name = Input.Name;
-                user.PhoneNumber = Input.PhoneNumber; 
+                user.PhoneNumber = Input.PhoneNumber;
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {

@@ -28,8 +28,22 @@ namespace GFoods.DataAccess.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+
+            //modelBuilder.Entity<ApplicationUser>().HasData(
+            //    new ApplicationUser
+            //    {
+            //        Name = "Nguyen",
+            //        StreetAddress = "StreetAddressA",
+            //        City = "CityA",
+            //        State = "StateA",
+            //        PostalCode= "PostalCodeA",
+            //        Coin = 10000
+            //    }
+            //    );
+
 
         }
+
+
     }
 }

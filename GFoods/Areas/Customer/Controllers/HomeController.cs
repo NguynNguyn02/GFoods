@@ -31,7 +31,7 @@ namespace GFoods.Areas.Customer.Controllers
             return View();
 
         }
-
+        [Authorize]
         public IActionResult Coin()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
